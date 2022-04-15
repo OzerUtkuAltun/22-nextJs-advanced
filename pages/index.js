@@ -39,6 +39,12 @@ const DUMMY_MEETUPS = [
 ];
 
 function HomePage() {
+
+
+  // Not: useState, ve useEffect kullanarak db'den data getirme işlemi 2 cycle'da gerçekleşir
+  // next.js html'i ilk cycle'da render ettiği için useEffect içerisinde data'yı getirme işleminin
+  // yapılması önerilmez.
+
   return <MeetupList meetups={DUMMY_MEETUPS} />
 }
 export default HomePage;
