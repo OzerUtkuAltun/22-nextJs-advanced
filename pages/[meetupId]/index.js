@@ -18,7 +18,7 @@ export async function getStaticProps(context) {
   // context burada req ve response tutmuyor. params tutuyor.
 
   const meetupId = context.params.meetupId;
-  console.log(meetupId);
+  console.log(meetupId); // sadece terminalde gözükür.
 
   // fetch data for a single meetup
 
