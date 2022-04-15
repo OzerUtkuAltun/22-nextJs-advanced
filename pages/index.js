@@ -60,7 +60,8 @@ export async function getStaticProps() {
   return {  // her zaman bir obje dönülmeli.
     props: { // ismi props olmalı. Homepage'deki props'a refer eder.
       meetups: DUMMY_MEETUPS
-    } 
+    } ,
+    revalidate: 10 // nextjs gelen request için bu sayfayı yeniden oluşturana kadar bekleyecek (second)
   }
 
 }
