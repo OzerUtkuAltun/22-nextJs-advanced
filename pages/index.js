@@ -38,13 +38,31 @@ const DUMMY_MEETUPS = [
   },
 ];
 
-function HomePage() {
-
-
+function HomePage(props) {
   // Not: useState, ve useEffect kullanarak db'den data getirme işlemi 2 cycle'da gerçekleşir
   // next.js html'i ilk cycle'da render ettiği için useEffect içerisinde data'yı getirme işleminin
-  // yapılması önerilmez.
+  // yapılması önerilmez. Bu durum ayrıca SEO için de kötüdür.
 
-  return <MeetupList meetups={DUMMY_MEETUPS} />
+  // pre rendering'in iki formu var; static generation ve server side rendering
+  // NOT: static generation'da page component uygulama build aldığında renderlanır. (build edildikten sonra pre-rendered page değişmez. (defaultta))
+
+  return <MeetupList meetups={props.meetups} />;
 }
+
+
+// sadece page componentlar'da çalışır. Diğer componentlerde çalışmaz.
+// Bu kod sadece build zamanında çalışacak. Bu kod client'a hiç bir zaman iletilmez.
+// Data'yı getirmek vs. için bu kısmı kullanacağız.
+export async function getStaticProps() {
+
+  // fetch data from an API
+
+  return {  // her zaman bir obje dönülmeli.
+    props: { // ismi props olmalı. Homepage'deki props'a refer eder.
+      meetups: DUMMY_MEETUPS
+    } 
+  }
+
+}
+
 export default HomePage;
