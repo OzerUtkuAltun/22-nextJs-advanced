@@ -53,38 +53,39 @@ function HomePage(props) {
 // sadece page componentlar'da çalışır. Diğer componentlerde çalışmaz.
 // Bu kod sadece build zamanında çalışacak. Bu kod client'a hiç bir zaman iletilmez.
 // Data'yı getirmek vs. için bu kısmı kullanacağız.
-// export async function getStaticProps() {
 
-//   // fetch data from an API
+export async function getStaticProps() {
 
-//   return {  // her zaman bir obje dönülmeli.
-//     props: { // ismi props olmalı. Homepage'deki props'a refer eder.
-//       meetups: DUMMY_MEETUPS
-//     } ,
-//     revalidate: 10 // nextjs gelen request için bu sayfayı yeniden oluşturana kadar bekleyecek (second)
-//   }
+  // fetch data from an API
 
-// }
-
-
-// server'a her deploymenttan sonra çalışır. Server side rendering için kullanılır.
-export async function getServerSideProps(context) {
-
-  // revalidate set etmeye gerek yok. Çünkü burası her gelen istekten sonra yeniden çalışacak.
-  // context üzerinden req ve res'a erişilebilir.
-
-  const req = context.req;
-  const res = context.res;
-
-  console.log(req);
-  
- 
-  return {
-    props: {
-       meetups: DUMMY_MEETUPS
-      }
+  return {  // her zaman bir obje dönülmeli.
+    props: { // ismi props olmalı. Homepage'deki props'a refer eder.
+      meetups: DUMMY_MEETUPS
+    } ,
+    revalidate: 10 // nextjs gelen request için bu sayfayı yeniden oluşturana kadar bekleyecek (second)
   }
 
 }
+
+
+// server'a her deploymenttan sonra çalışır. Server side rendering için kullanılır.
+// export async function getServerSideProps(context) {
+
+//   // revalidate set etmeye gerek yok. Çünkü burası her gelen istekten sonra yeniden çalışacak.
+//   // context üzerinden req ve res'a erişilebilir.
+
+//   const req = context.req;
+//   const res = context.res;
+
+//   console.log(req);
+  
+ 
+//   return {
+//     props: {
+//        meetups: DUMMY_MEETUPS
+//       }
+//   }
+
+// }
 
 export default HomePage;
