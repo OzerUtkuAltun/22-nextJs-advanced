@@ -90,7 +90,7 @@ export async function getStaticProps() {
         address: meetup.address
       }))
     } ,
-    revalidate: 10 // nextjs gelen request için bu sayfayı yeniden oluşturana kadar bekleyecek (second)
+    revalidate: 1 // nextjs gelen request için bu sayfayı yeniden oluşturana kadar bekleyecek (second)
   }
 
 }
