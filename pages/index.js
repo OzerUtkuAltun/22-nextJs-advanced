@@ -2,6 +2,7 @@
 
 import React from "react";
 import MeetupList from "../components/meetups/MeetupList";
+import { MongoClient } from "mongodb";
 
 const DUMMY_MEETUPS = [
   {
@@ -58,9 +59,27 @@ export async function getStaticProps() {
 
   // fetch data from an API
 
+  const client = await MongoClient.connect(
+    `mongodb+srv://utku:Umongo123..@mycluster.0gnlu.mongodb.net/meetups?retryWrites=true&w=majority`
+  );
+
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+
+  const meetups = await meetupsCollection.find().toArray();
+
+  client.close();
+
+
   return {  // her zaman bir obje dönülmeli.
     props: { // ismi props olmalı. Homepage'deki props'a refer eder.
-      meetups: DUMMY_MEETUPS
+      meetups: meetups.map(meetup => ({
+        id: meetup._id.toString(), // exception atmaması için, bu id mongodb tarafından oto generate ediliyor ve json olarak görünmüyor.
+        title: meetup.title,
+        description: meetup.description,
+        image: meetup.image,
+        address: meetup.address
+      }))
     } ,
     revalidate: 10 // nextjs gelen request için bu sayfayı yeniden oluşturana kadar bekleyecek (second)
   }
