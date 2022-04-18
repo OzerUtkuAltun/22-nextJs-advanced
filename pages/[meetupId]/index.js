@@ -75,8 +75,12 @@ export async function getStaticPaths() {
         meetupId: meetup._id.toString(),
       },
     })),
-    fallback: false, // false -> bütün meetupId value'larını karşılıyor. / true -> bazılarını karşılıyor
+  
+    fallback: "blocking", // false -> bütün meetupId value'larını karşılıyor. / true -> bazılarını karşılıyor
+    // deploy ettikten ve yeni toplantı ekledikten sonra detay sayfasına gitmeye
+    // çalıştığımızda 404 attı. Çözmek için fallback'e blocking veya true verilebilir.
   };
+
 
   /* 
 
