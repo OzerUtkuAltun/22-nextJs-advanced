@@ -1,15 +1,22 @@
 import React from "react";
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 import { MongoClient, ObjectId } from "mongodb";
+import Head from "next/head";
 
 function MeetupDetails(props) {
   return (
-    <MeetupDetail
-      image={props.meetupData.image}
-      title={props.meetupData.title}
-      address={props.meetupData.address}
-      description={props.meetupData.description}
-    />
+    <React.Fragment>
+      <Head>
+        <title>{props.meetupData.title}</title>
+        <meta name="description" content={props.meetupData.description}></meta>
+      </Head>
+      <MeetupDetail
+        image={props.meetupData.image}
+        title={props.meetupData.title}
+        address={props.meetupData.address}
+        description={props.meetupData.description}
+      />
+    </React.Fragment>
   );
 }
 
@@ -20,7 +27,6 @@ export async function getStaticProps(context) {
   const meetupId = context.params.meetupId;
   console.log(meetupId); // sadece terminalde gözükür.
 
-
   const client = await MongoClient.connect(
     `mongodb+srv://utku:Umongo123..@mycluster.0gnlu.mongodb.net/meetups?retryWrites=true&w=majority`
   );
@@ -28,7 +34,9 @@ export async function getStaticProps(context) {
   const db = client.db();
   const meetupsCollection = db.collection("meetups");
 
-  const selectedMeetup = await meetupsCollection.findOne({_id: ObjectId(meetupId)}) // id'yi object id ile wraplemek gerekiyor
+  const selectedMeetup = await meetupsCollection.findOne({
+    _id: ObjectId(meetupId),
+  }); // id'yi object id ile wraplemek gerekiyor
 
   client.close();
 
@@ -40,16 +48,14 @@ export async function getStaticProps(context) {
         title: selectedMeetup.title,
         id: selectedMeetup._id.toString(),
         description: selectedMeetup.description,
-        image: selectedMeetup.image
-      }
+        image: selectedMeetup.image,
+      },
     },
   };
 }
 
 // dynamic page is export etmek zorundayız.
 export async function getStaticPaths() {
-
-
   const client = await MongoClient.connect(
     `mongodb+srv://utku:Umongo123..@mycluster.0gnlu.mongodb.net/meetups?retryWrites=true&w=majority`
   );
@@ -57,19 +63,18 @@ export async function getStaticPaths() {
   const db = client.db();
   const meetupsCollection = db.collection("meetups");
 
-  const meetups = await meetupsCollection.find({}, {_id: 1}).toArray() // parametre olarak verilen ilk obje
-  // filter criteria biz herhangi bir filter uygulamak istemediğimiz için boş bıraktık. 
+  const meetups = await meetupsCollection.find({}, { _id: 1 }).toArray(); // parametre olarak verilen ilk obje
+  // filter criteria biz herhangi bir filter uygulamak istemediğimiz için boş bıraktık.
   // İkinci objeyi ise sadecce _id değerlerini çekmek istediğimiz için verdik.
 
   client.close();
 
-
   return {
-    paths: meetups.map(meetup => ({
+    paths: meetups.map((meetup) => ({
       params: {
-        meetupId: meetup._id.toString()
-      }
-    })) ,
+        meetupId: meetup._id.toString(),
+      },
+    })),
     fallback: false, // false -> bütün meetupId value'larını karşılıyor. / true -> bazılarını karşılıyor
   };
 
@@ -96,8 +101,6 @@ export async function getStaticPaths() {
     ],
 
   */
-
-
 }
 
 export default MeetupDetails;

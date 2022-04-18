@@ -3,6 +3,7 @@
 import React from "react";
 import MeetupList from "../components/meetups/MeetupList";
 import { MongoClient } from "mongodb";
+import Head from "next/head"; // sayfaya head eklemek için (SEO için)
 
 const DUMMY_MEETUPS = [
   {
@@ -47,7 +48,15 @@ function HomePage(props) {
   // pre rendering'in iki formu var; static generation ve server side rendering
   // NOT: static generation'da page component uygulama build aldığında renderlanır. (build edildikten sonra pre-rendered page değişmez. (defaultta))
 
-  return <MeetupList meetups={props.meetups} />;
+
+  // head ekleme işlemleri bütün componentlere uygulanabilir.
+  return <React.Fragment>
+    <Head>
+      <title>React Meetups</title>
+      <meta name="description" content="Something" />
+    </Head>
+    <MeetupList meetups={props.meetups} />
+  </React.Fragment>;
 }
 
 
