@@ -1,11 +1,11 @@
 import React from "react";
 import MeetupDetail from "../../components/meetups/MeetupDetail";
+import { MongoClient, ObjectId } from "mongodb";
 
 function MeetupDetails(props) {
   return (
     <MeetupDetail
       image={props.meetupData.image}
-      alt={props.meetupData.alt}
       title={props.meetupData.title}
       address={props.meetupData.address}
       description={props.meetupData.description}
@@ -20,26 +20,63 @@ export async function getStaticProps(context) {
   const meetupId = context.params.meetupId;
   console.log(meetupId); // sadece terminalde gözükür.
 
+
+  const client = await MongoClient.connect(
+    `mongodb+srv://utku:Umongo123..@mycluster.0gnlu.mongodb.net/meetups?retryWrites=true&w=majority`
+  );
+
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+
+  const selectedMeetup = await meetupsCollection.findOne({_id: ObjectId(meetupId)}) // id'yi object id ile wraplemek gerekiyor
+
+  client.close();
+
   // fetch data for a single meetup
 
   return {
     props: {
       meetupData: {
-        image:
-          "https://www.targettraining.eu/wp-content/uploads/2019/02/meetings-practice.jpg",
-        alt: "A first meetup",
-        id: meetupId,
-        title: "Title",
-        address: "Address",
-        description: "description",
-      },
+        title: selectedMeetup.title,
+        id: selectedMeetup._id.toString(),
+        description: selectedMeetup.description,
+        image: selectedMeetup.image
+      }
     },
   };
 }
 
 // dynamic page is export etmek zorundayız.
 export async function getStaticPaths() {
+
+
+  const client = await MongoClient.connect(
+    `mongodb+srv://utku:Umongo123..@mycluster.0gnlu.mongodb.net/meetups?retryWrites=true&w=majority`
+  );
+
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+
+  const meetups = await meetupsCollection.find({}, {_id: 1}).toArray() // parametre olarak verilen ilk obje
+  // filter criteria biz herhangi bir filter uygulamak istemediğimiz için boş bıraktık. 
+  // İkinci objeyi ise sadecce _id değerlerini çekmek istediğimiz için verdik.
+
+  client.close();
+
+
   return {
+    paths: meetups.map(meetup => ({
+      params: {
+        meetupId: meetup._id.toString()
+      }
+    })) ,
+    fallback: false, // false -> bütün meetupId value'larını karşılıyor. / true -> bazılarını karşılıyor
+  };
+
+  /* 
+
+    ESKI HALİ: params keyi önemli!!!!!!!!!!!!!!!!!!!!!!!!!
+
     paths: [
       {
         params: {
@@ -57,8 +94,10 @@ export async function getStaticPaths() {
         },
       },
     ],
-    fallback: false, // false -> bütün meetupId value'larını karşılıyor. / true -> bazılarını karşılıyor
-  };
+
+  */
+
+
 }
 
 export default MeetupDetails;
